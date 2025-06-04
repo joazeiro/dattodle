@@ -70,10 +70,12 @@ function loadGuess() {
         coaster.addEventListener('click', async () => {
             searchList.classList.add(('hide-search-list'));
             coasterSearchBox.value = "";
-            debugger;
-            const result = await fetch(`${apiBaseUrl}/coasters/${coaster.dataset.id}`);
-            const guess = await result.json();
+            
+            //const result = await fetch(`${apiBaseUrl}/coasters/${coaster.dataset.id}`);
+            //const guess = await result.json();
+            const guess = devices[coaster.dataset.id]
             console.log(guess);
+            //debugger;
             if (gamemode == 'daily' && window.localStorage.getItem('gameEnd')) return;
             makeGuess(guess);
         });
@@ -195,17 +197,18 @@ startup();
 async function makeGuess(guess) {
     const row = state.currentRow;
     if (row > 5) return;
-    const res = await fetch(`${apiBaseUrl}${guess.park["@id"].replace(/^\/api/, '')}`);
-    const data = await res.json();
-    guessPark = data;
+    //const res = await fetch(`${apiBaseUrl}${guess.park["@id"].replace(/^\/api/, '')}`);
+    //const data = await res.json();
+    //guessPark = data;
     /* Hardcoded Fixes for Possible Answers pt 2 */
-    if (guess.id == 2111) guess.inversionsNumber = 3;
-    if (guess.id == 3056) guess.inversionsNumber = 2;
-    if (guess.id == 2896) guess.seatingType.name = "Floorless";
-    if (guess.id == 2006) guess.height = 27;
-    if (guess.id == 5612) guess.height = 11;
-    let guessCountry = guessPark.country.name.substring(8);
-    guessCountry = guessCountry[0].toUpperCase() + guessCountry.substring(1);
+    //if (guess.id == 2111) guess.inversionsNumber = 3;
+    //if (guess.id == 3056) guess.inversionsNumber = 2;
+    //if (guess.id == 2896) guess.seatingType.name = "Floorless";
+    //if (guess.id == 2006) guess.height = 27;
+    //if (guess.id == 5612) guess.height = 11;
+    //let guessCountry = guessPark.country.name.substring(8);
+    //guessCountry = guessCountry[0].toUpperCase() + guessCountry.substring(1);
+    debugger;
     compareStats(guess, guessCountry);
     state.currentRow++;
 }
