@@ -143,7 +143,7 @@ const state = {
 };
 async function startup() {
 	//LOAD DEVICES TO GLOBAL VAR!
-	const res = await fetch('/test.json');
+	const res = await fetch('/deviceInfo/test.json');
     devices = await res.json();
 	
     if (window.localStorage.getItem(`gamemode`)) gamemode = window.localStorage.getItem(`gamemode`);
