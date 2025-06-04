@@ -162,6 +162,7 @@ async function startup() {
     //const res1 = await fetch(`${apiBaseUrl}/coasters/${aID}`);
     //const data = await res1.json();
     //answer=data;
+    answer=devices[getDailyDeviceID()]
     //const res2 = await fetch(`${apiBaseUrl}${answer.park["@id"].replace(/^\/api/, '')}`);
     //const data2 = await res2.json();
     //answerPark=data2;
@@ -185,6 +186,7 @@ async function startup() {
         window.localStorage.setItem('update','1');
         //openPopup("updateNotif");
     }
+
     if (window.localStorage.getItem('gameEnd') && gamemode == 'daily') {
         setTimeout(() => {
             showShareButton();
@@ -208,114 +210,145 @@ async function makeGuess(guess) {
     //if (guess.id == 5612) guess.height = 11;
     //let guessCountry = guessPark.country.name.substring(8);
     //guessCountry = guessCountry[0].toUpperCase() + guessCountry.substring(1);
-    debugger;
-    compareStats(guess, guessCountry);
+    compareStats(guess);
+    console.log("hi "+guess)
     state.currentRow++;
 }
 
-function compareStats(guess, guessCountry) {
+function compareStats(guess) {
     const row = state.currentRow;
     const animation_duration = 700;
+
+    //debugger;
+
+    ///deviceModel,formFactor,arrayDriveCount,arrayDriveSize,advertiseSize,releaseYear,hasSlog,hasRemoteManage,raidConfig
+
     // Name
     setTimeout(() => {
-        state.grid[row][0] = guess.name + " - " + guess.park.name;
+        state.grid[row][0] = guess.deviceModel;
         updateTile(row,0);
-    }, ((1) * animation_duration) / 2);
+    }, ((0+1) * animation_duration) / 2);
     document.getElementById(`tile${row}0`).classList.add('animated')
     document.getElementById(`tile${row}0`).style.animationDelay = `${(0 * animation_duration / 2)}ms`;
 
-    // Manufacturer
+    // Form Factor
     setTimeout(() => {
-        state.grid[row][2] = guess.manufacturer.name;
+        state.grid[row][1] = guess.formFactor;
+        updateTile(row,1);
+        if (answer.formFactor==guess.formFactor) document.getElementById(`tile${row}1`).classList.add('correct');
+        else document.getElementById(`tile${row}1`).classList.add('wrong');
+    }, ((1+1) * animation_duration) / 2);
+    document.getElementById(`tile${row}1`).classList.add('animated')
+    document.getElementById(`tile${row}1`).style.animationDelay = `${(1 * animation_duration / 2)}ms`;
+//
+    // Array Drive Count
+    setTimeout(() => {
+        if (guess.arrayDriveCount==0.5){
+            state.grid[row][2] = "" + "Shared w/ OS";
+        }else{
+            state.grid[row][2] = "" + guess.arrayDriveCount;
+        }
         updateTile(row,2);
-        if (answer.manufacturer.name==guess.manufacturer.name) document.getElementById(`tile${row}2`).classList.add('correct');
-        else document.getElementById(`tile${row}2`).classList.add('wrong');
-    }, ((3) * animation_duration) / 2);
+        if (guess.arrayDriveCount==answer.arrayDriveCount) document.getElementById(`tile${row}2`).classList.add('correct');
+        else if (answer.arrayDriveCount > guess.arrayDriveCount) document.getElementById(`tile${row}2`).classList.add('higher');
+        else document.getElementById(`tile${row}2`).classList.add('lower');
+    }, ((2+1) * animation_duration) / 2);
     document.getElementById(`tile${row}2`).classList.add('animated')
     document.getElementById(`tile${row}2`).style.animationDelay = `${(2 * animation_duration / 2)}ms`;
-//
-    // Height
-    setTimeout(() => {
-        let gHeight = guess.height, aHeight = answer.height;
-        if (!usingMetric) {
-            gHeight = meterToFt(guess.height);
-            aHeight = meterToFt(answer.height);
-            state.grid[row][5] = "" + gHeight + " ft";
-        }
-        else state.grid[row][5] = "" + gHeight + " m";
-        updateTile(row,5);
-        if (aHeight==gHeight) document.getElementById(`tile${row}5`).classList.add('correct');
-        else if (aHeight > gHeight) document.getElementById(`tile${row}5`).classList.add('higher');
-        else document.getElementById(`tile${row}5`).classList.add('lower');
-    }, ((6) * animation_duration) / 2);
-    document.getElementById(`tile${row}5`).classList.add('animated')
-    document.getElementById(`tile${row}5`).style.animationDelay = `${(5 * animation_duration / 2)}ms`;
 
-    //Length
+    // Array Drive Size
     setTimeout(() => {
-        let gLength = guess.length, aLength = answer.length;
-        if (!usingMetric) {
-            gLength = meterToFt(guess.length);
-            aLength = meterToFt(answer.length);
-            state.grid[row][6] = "" + gLength + " ft";
+        if (guess.arrayDriveSize<1.0){
+            state.grid[row][3] = "" + guess.arrayDriveSize*1000 + " GB";
+        }else{
+            state.grid[row][3] = "" + guess.arrayDriveSize + " TB";
         }
-        else state.grid[row][6] = "" + gLength + " m";
-        updateTile(row,6);
-        if (aLength==gLength) document.getElementById(`tile${row}6`).classList.add('correct');
-        else if (aLength > gLength) document.getElementById(`tile${row}6`).classList.add('higher');
-        else document.getElementById(`tile${row}6`).classList.add('lower');
-    }, ((7) * animation_duration) / 2);
-    document.getElementById(`tile${row}6`).classList.add('animated')
-    document.getElementById(`tile${row}6`).style.animationDelay = `${(6 * animation_duration / 2)}ms`;
+        
+        updateTile(row,3);
+        if (answer.arrayDriveSize==guess.arrayDriveSize) document.getElementById(`tile${row}3`).classList.add('correct');
+        else if (answer.arrayDriveSize > guess.arrayDriveSize) document.getElementById(`tile${row}3`).classList.add('higher');
+        else document.getElementById(`tile${row}3`).classList.add('lower');
+    }, ((3+1) * animation_duration) / 2);
+    document.getElementById(`tile${row}3`).classList.add('animated')
+    document.getElementById(`tile${row}3`).style.animationDelay = `${(3 * animation_duration / 2)}ms`;
 
-    //Speed
+    // Advertised Size
     setTimeout(() => {
-        let gSpeed = guess.speed, aSpeed = answer.speed;
-        if (!usingMetric) {
-            gSpeed = kmhToMph(guess.speed);
-            aSpeed = kmhToMph(answer.speed);
-            state.grid[row][7] = "" + gSpeed + " mph";
+        if (guess.advertiseSize<1.0){
+            state.grid[row][4] = "" + guess.advertiseSize*1000 + " GB";
+        }else{
+            state.grid[row][4] = "" + guess.advertiseSize + " TB";
         }
-        else state.grid[row][7] = "" + gSpeed + " km/h";
-        updateTile(row,7);
-        if (gSpeed==aSpeed) document.getElementById(`tile${row}7`).classList.add('correct');
-        else if (aSpeed > gSpeed) document.getElementById(`tile${row}7`).classList.add('higher');
-        else document.getElementById(`tile${row}7`).classList.add('lower');
-    }, ((8) * animation_duration) / 2);
-    document.getElementById(`tile${row}7`).classList.add('animated')
-    document.getElementById(`tile${row}7`).style.animationDelay = `${(7 * animation_duration / 2)}ms`;
-
-    //Inversions
-    setTimeout(() => {
-        state.grid[row][4] = "" + guess.inversionsNumber;
+        
         updateTile(row,4);
-        if (answer.inversionsNumber==guess.inversionsNumber) document.getElementById(`tile${row}4`).classList.add('correct');
-        else if (answer.inversionsNumber > guess.inversionsNumber) document.getElementById(`tile${row}4`).classList.add('higher');
+        if (answer.advertiseSize==guess.advertiseSize) document.getElementById(`tile${row}4`).classList.add('correct');
+        else if (answer.advertiseSize > guess.advertiseSize) document.getElementById(`tile${row}4`).classList.add('higher');
         else document.getElementById(`tile${row}4`).classList.add('lower');
-    }, ((5) * animation_duration) / 2);
+    }, ((4+1) * animation_duration) / 2);
     document.getElementById(`tile${row}4`).classList.add('animated')
     document.getElementById(`tile${row}4`).style.animationDelay = `${(4 * animation_duration / 2)}ms`;
 
-    //Country
+     // Year
     setTimeout(() => {
-        if (guessCountry == 'Usa' || guessCountry == 'Uk') state.grid[row][1] = "" + guessCountry.toUpperCase();
-        else state.grid[row][1] = "" + guessCountry;
-        updateTile(row,1);
-        if (answerCountry==guessCountry) document.getElementById(`tile${row}1`).classList.add('correct');
-        else document.getElementById(`tile${row}1`).classList.add('wrong');
-    }, ((2) * animation_duration) / 2);
-    document.getElementById(`tile${row}1`).classList.add('animated')
-    document.getElementById(`tile${row}1`).style.animationDelay = `${(1 * animation_duration / 2)}ms`;
+        state.grid[row][5] = "" + guess.releaseYear;
+        updateTile(row,5);
+        if (answer.releaseYear==guess.releaseYear) document.getElementById(`tile${row}5`).classList.add('correct');
+        else if (answer.releaseYear > guess.releaseYear) document.getElementById(`tile${row}5`).classList.add('higher');
+        else document.getElementById(`tile${row}5`).classList.add('lower');
+    }, ((5+1) * animation_duration) / 2);
+    document.getElementById(`tile${row}5`).classList.add('animated')
+    document.getElementById(`tile${row}5`).style.animationDelay = `${(5 * animation_duration / 2)}ms`;
 
-    //Seating Type
+     // SLOG?
     setTimeout(() => {
-        state.grid[row][3] = "" + guess.seatingType.name;
-        updateTile(row,3);
-        if (answer.seatingType.name==guess.seatingType.name) document.getElementById(`tile${row}3`).classList.add('correct');
-        else document.getElementById(`tile${row}3`).classList.add('wrong');
-    }, ((4) * animation_duration) / 2);
-    document.getElementById(`tile${row}3`).classList.add('animated')
-    document.getElementById(`tile${row}3`).style.animationDelay = `${(3 * animation_duration / 2)}ms`;
+        if(guess.hasSlog==true){
+            state.grid[row][6] = "Yes";
+        }else{
+            state.grid[row][6] = "No";
+        }
+        updateTile(row,6);
+        if (answer.hasSlog==guess.hasSlog) document.getElementById(`tile${row}6`).classList.add('correct');
+        else document.getElementById(`tile${row}6`).classList.add('wrong');
+    }, ((6+1) * animation_duration) / 2);
+    document.getElementById(`tile${row}6`).classList.add('animated')
+    document.getElementById(`tile${row}6`).style.animationDelay = `${(6 * animation_duration / 2)}ms`;
+
+     // Remote Management?
+    setTimeout(() => {
+        if(guess.hasRemoteManage==true){
+            state.grid[row][7] = "Yes";
+        }else{
+            state.grid[row][7] = "No";
+        }
+        updateTile(row,7);
+        if (answer.hasRemoteManage==guess.hasRemoteManage) document.getElementById(`tile${row}7`).classList.add('correct');
+        else document.getElementById(`tile${row}7`).classList.add('wrong');
+    }, ((7+1) * animation_duration) / 2);
+    document.getElementById(`tile${row}7`).classList.add('animated')
+    document.getElementById(`tile${row}7`).style.animationDelay = `${(7 * animation_duration / 2)}ms`;
+
+     // RAID Config
+    setTimeout(() => {
+        state.grid[row][8] = "" + guess.raidConfig;
+        updateTile(row,8);
+        if (answer.raidConfig==guess.raidConfig) document.getElementById(`tile${row}8`).classList.add('correct');
+        else document.getElementById(`tile${row}8`).classList.add('wrong');
+    }, ((8+1) * animation_duration) / 2);
+    document.getElementById(`tile${row}8`).classList.add('animated')
+    document.getElementById(`tile${row}8`).style.animationDelay = `${(8 * animation_duration / 2)}ms`;
+
+
+    //Country
+    //setTimeout(() => {
+    //    if (guessCountry == 'Usa' || guessCountry == 'Uk') state.grid[row][1] = "" + guessCountry.toUpperCase();
+    //    else state.grid[row][1] = "" + guessCountry;
+    //    updateTile(row,1);
+    //    if (answerCountry==guessCountry) document.getElementById(`tile${row}1`).classList.add('correct');
+    //    else document.getElementById(`tile${row}1`).classList.add('wrong');
+    //}, ((2) * animation_duration) / 2);
+    //document.getElementById(`tile${row}1`).classList.add('animated')
+    //document.getElementById(`tile${row}1`).style.animationDelay = `${(1 * animation_duration / 2)}ms`;
+
 
     const isWinner = answer.id === guess.id;
     const isGameOver = (row === 5);
@@ -328,45 +361,43 @@ function compareStats(guess, guessCountry) {
             startConfetti();
             addWin(row+1,gamemode);
             document.getElementById('hmsg').innerHTML=(`You got it!`);
-            document.getElementById('msg').innerHTML=(`The correct answer was ${answer.name} from ${answerPark.name}.`);
-            document.getElementById('msg3').innerHTML=(`<a href="https://www.youtube.com/results?search_query=${answer.name}+${answerPark.name}+pov">Click here to watch a POV!</a>`)
+            document.getElementById('msg').innerHTML=(`The correct answer was ${answer.deviceModel}.`);
             openPopup("endgame");
             // Remove confetti after animation finishes
             setTimeout(function() {
                 stopConfetti();
             }, 3000);
-            if(gamemode == 'daily') window.localStorage.setItem('gameEnd','true');
+            if(gamemode == 'daily') window.localStorage.setItem('gameEnd','false');
             if(gamemode == 'daily') window.localStorage.setItem('gameState','win');
             if(gamemode == 'daily') showShareButton();
         }
         else if (isGameOver) {
             document.getElementById('hmsg').innerHTML=(`Out of turns :((`);
-            document.getElementById('msg').innerHTML=(`The correct answer was ${answer.name} from ${answerPark.name}.`);
-            document.getElementById('msg3').innerHTML=(`<a href="https://www.youtube.com/results?search_query=${answer.name}+${answerPark.name}+pov">Click here to watch a POV!</a>`)
+            document.getElementById('msg').innerHTML=(`The correct answer was ${answer.deviceModel}.`);
             addLoss(gamemode);
             openPopup("endgame");
             if(gamemode == 'daily') window.localStorage.setItem('gameEnd','true');
             if(gamemode == 'daily') window.localStorage.setItem('gameState','loss');
             if(gamemode == 'daily') showShareButton();
         }
-        else if (row === 2) {
-            document.getElementById(`tile28`).innerHTML = `
-            <button onclick="openPopup('hint1');">
-                <img src="assets/hint1on.png">
-            </button>
-            `;
-            document.getElementById('h1m').innerHTML=(answer.name[0]);
-        }
-        else if (row === 4) {
-            document.getElementById(`tile48`).innerHTML = `
-            <button onclick="openPopup('hint2');">
-                <img src="assets/hint2on.png">
-            </button>
-            `;
-            let h2temp = answerPark.name.replace(/[^ ]/g,'-');
-            h2temp = h2temp.replace(/ /g,'  ');
-            document.getElementById('h2m').innerHTML=(answerPark.name[0]+h2temp.substring(1));
-        }
+        //else if (row === 2) {
+        //    document.getElementById(`tile28`).innerHTML = `
+        //    <button onclick="openPopup('hint1');">
+        //        <img src="assets/hint1on.png">
+        //    </button>
+        //    `;
+        //    document.getElementById('h1m').innerHTML=(answer.name[0]);
+        //}
+        //else if (row === 4) {
+        //    document.getElementById(`tile48`).innerHTML = `
+        //    <button onclick="openPopup('hint2');">
+        //        <img src="assets/hint2on.png">
+        //    </button>
+        //    `;
+        //    let h2temp = answerPark.name.replace(/[^ ]/g,'-');
+        //    h2temp = h2temp.replace(/ /g,'  ');
+        //    document.getElementById('h2m').innerHTML=(answerPark.name[0]+h2temp.substring(1));
+        //}
     }, 4.5 * animation_duration);
 }
 function openPopup(name) {
@@ -381,9 +412,12 @@ function closePopup(name) {
 
 
 // Daily?
-function getDailyCoaster() {
-    return paIDs[(Math.floor(Date.now() / 86400000)-52)%paIDs.length];
+function getDailyDeviceID() {
+    return (((Math.floor(Date.now() / 86400000)-52)+0) * 16807 % 2147483647)%devices.length
+    //return ((Math.floor(Date.parse("2025-06-05T00:00:00Z") / 86400000)-52) * 16807 % 2147483647)%devices.length
+    //debugger;
 }
+
 function checkMaybeSwitch() {
     const dayLastPlayed = window.localStorage.getItem(`dayLastPlayed`);
     window.localStorage.setItem(`dayLastPlayed`, today)
@@ -412,9 +446,7 @@ async function updateDaily() {
         for (let i = 1; i < 7; i++) {
             const currGuess = window.localStorage.getItem(`guess${i}`);
             if (currGuess) {
-                let guessID = parseInt(currGuess);
-                const result = await fetch(`${apiBaseUrl}/coasters/${guessID}`);
-                const guess = await result.json();
+                const guess = devices[currGuess];
                 console.log(guess);
                 await makeGuess(guess);
             }
@@ -672,20 +704,20 @@ function emojiPropagandaVer() {
 }
 
 function showShareButton() {
-    var s = document.getElementById('shareButtonJumpscare');
-    document.getElementById(`tile08`).classList.add('fades')
-    document.getElementById(`tile08`).innerHTML = `
-        <button onclick="openPopup('copy');
-        copyResult();">
-            <img src="assets/copy.png">
-        </button>
-    `;
-    document.getElementById(`tile18`).classList.add('fades')
-    document.getElementById(`tile18`).innerHTML = `
-        <a href="https://twitter.com/intent/tweet?text=${emojiPropagandaVer()}"">
-            <img src="assets/tweet.png">
-        </a>
-    `;
+    //var s = document.getElementById('shareButtonJumpscare');
+    //document.getElementById(`tile08`).classList.add('fades')
+    //document.getElementById(`tile08`).innerHTML = `
+    //    <button onclick="openPopup('copy');
+    //    copyResult();">
+    //        <img src="assets/copy.png">
+    //    </button>
+    //`;
+    //document.getElementById(`tile18`).classList.add('fades')
+    //document.getElementById(`tile18`).innerHTML = `
+    //    <a href="https://twitter.com/intent/tweet?text=${emojiPropagandaVer()}"">
+    //        <img src="assets/tweet.png">
+    //    </a>
+    //`;
 }
 
 function copyResult() {
