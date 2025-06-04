@@ -155,14 +155,13 @@ async function startup() {
     const game = document.getElementById('game');
     var aID;
     if (gamemode == 'endless') {
-        if (endlessHardMode) aID = extended_paIDs[Math.floor(Math.random() * extended_paIDs.length)];
-        else aID = paIDs[Math.floor(Math.random() * paIDs.length)];
-    }
+        answer=devices[Math.floor(Math.random()*devices.length-1)]
+    }else answer=devices[getDailyDeviceID()]
     //else aID = getDailyCoaster();
     //const res1 = await fetch(`${apiBaseUrl}/coasters/${aID}`);
     //const data = await res1.json();
     //answer=data;
-    answer=devices[getDailyDeviceID()]
+    
     //const res2 = await fetch(`${apiBaseUrl}${answer.park["@id"].replace(/^\/api/, '')}`);
     //const data2 = await res2.json();
     //answerPark=data2;
