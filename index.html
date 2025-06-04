@@ -12,7 +12,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="main.css" />
-    <meta name="description" content="Coastle is a roller coaster guessing game based off of Wordle and ride statistics.">
+    <meta name="description" content="Dattodle is a Datto device guessing game based off of Coastle and Datto's documentation">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>dattodle</title>
 </head>
@@ -65,7 +65,7 @@
             <div class = "search-element">
                 <h3>Guess device</h3>
                 <input type = "text" class = "form-control"
-                placeholder="Coaster Name Here..."
+                placeholder="Device Model Here..."
                 id="coaster-search-box" onkeyup="findDevice()">
 				<div class = "search-list" id = "search-list">
                     <!--   List Here   -->
@@ -96,7 +96,7 @@
         <div id="shareButtonJumpscare"></div>
         <!-- Tile Titles Container -->
         <div class="tile-title-container">
-            <!-- Manufacturer, Height, Length, Speed, Inversions, Country -->
+            <!-- Form Factor, Array Drive Count, Array Drive Size, Total Size, Release Year, Has SLOG drive?, Has IPMI/iDrac?, RAID Configuration -->
             <div class="title nameHolder">Your Guess</div>
             <div class="title">Form Factor </div>
             <div class="title">Array Drive Ct.</div>
@@ -117,20 +117,18 @@
 <div class="popup" id="info">
     <div class = "popup-inner infor">
         <h3>How to Play</h3>
-        <p>An unknown coaster is randomly chosen from a very biased list I hand-picked. Type a coaster name into the search box and click the coaster/park you want to guess.</p>
-        <p>There's four different tiles that can show up when you guess:</p>
+        <p>An unknown Datto device model is picked by the system and your job is to figure out which one is it. Try as much as possible to not reference any Datto documentation, but if you need to, that's alright. Select the device you believe to be the correct one from the drop-down list.</p>
+        <p>There's four different tiles that can show up when you guess:</p></br>
         <img src="assets/higher.png">
-        <p>The answer is higher than your current guess.</p>
+        <p>The answer is higher than your current guess.</p></br>
         <img src="assets/lower.png">
-        <p>The answer is lower than your current guess.</p>
+        <p>The answer is lower than your current guess.</p></br>
         <img src="assets/wrong.png">
-        <p>The answer doesn't match your current guess.</p>
+        <p>The answer doesn't match your current guess.</p></br>
         <img src="assets/correct.png">
-        <p>The answer matches your current guess.</p>
-        <p>Coastle uses CaptainCoaster's API for data (thanks! you should check them out!) Sometimes there are null values though so sorry about that in advance.</p>
-        <p>You get a hint after turns 3 and 5. Click on the "Hint" button next to that row to see it.</p>
-        <p>Game ends when you guess the correct coaster or you use all six turns.</p>
-        <button onClick="closePopup('info');">Close</button>
+        <p>The answer matches your current guess.</p></br>
+        <p>Game ends when you guess the correct device  or you use all six turns.</p>
+        <button onClick="closePopup('info');"><h4>Close</h4></button>
     </div>
 </div>
 <div class="popup" id="stats">
