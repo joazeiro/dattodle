@@ -127,7 +127,6 @@ body {
     align-items: center;
     margin-top: 2rem;
     margin-bottom: -1rem;
-    margin-right: 4.33rem; /*70px*/
 }
 .tile-title-container .title {
     width: 4.33rem;
@@ -139,6 +138,7 @@ body {
     justify-content: center;
     align-items: center;
     margin: 8px;
+    text-align: center;
 }
 
 .tile-title-container .title.nameHolder{
@@ -182,8 +182,6 @@ body {
     display: grid;
     grid-template-rows: repeat(6,auto);
     grid-template-columns:repeat(9,auto);
-    width: auto / right -86px;
-    margin-left: 5.32rem; /*86px*/
 }
 
 .grid .tile {
